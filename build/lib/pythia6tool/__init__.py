@@ -1,2 +1,0 @@
-import pythia6tool.core
-import pythia6tool.reading_util
