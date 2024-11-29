@@ -2,7 +2,7 @@ from pythia6tool.particlecodes import getParticleName
 
 def getTrackRecordsByParticle(eventrecord, particlecode):
     """
-    
+    The TrackRecord objects of the requested particle type in the provided event.
 
     Parameters
     ----------
@@ -10,7 +10,7 @@ def getTrackRecordsByParticle(eventrecord, particlecode):
 
     Returns
     -------
-    The TrackRecord objects of the requested particle type in the provided event.
+    
     """
     
     trs = eventrecord.getTrackRecords()
@@ -63,7 +63,7 @@ def printUndecayedParticles(eventrecord):
 
 def tracebackParticleHistory(eventrecord, trackrecord):
     """
-    
+    List of TrackRecords which belong to the decay chain.
 
     Parameters
     ----------
@@ -74,7 +74,7 @@ def tracebackParticleHistory(eventrecord, trackrecord):
 
     Returns
     -------
-    List of TrackRecords which belong to the decay chain.
+    
 
     """
     
@@ -93,7 +93,7 @@ def tracebackParticleHistory(eventrecord, trackrecord):
 
 def printParticleHistory(eventrecord, trackrecord):
     """
-    
+    Prints all particles which belong to the decay chain.
 
     Parameters
     ----------
@@ -103,7 +103,7 @@ def printParticleHistory(eventrecord, trackrecord):
         TrackRecord of the particle to be traced back in the EventRecord.
 
     -------
-    Prints all particles which belong to the decay chain.
+    
 
     """
     decaychain = tracebackParticleHistory(eventrecord, trackrecord)
@@ -115,3 +115,30 @@ def printParticleHistory(eventrecord, trackrecord):
         if(i<len(decaychain)-1):
             print("-->", end=" ")
     
+def getEventsWithParticle(eventrecords, particlecode):
+    """
+    Gets the subset of events in which a given particle type occurs atleast once
+
+    Parameters
+    ----------
+    eventrecords : List[EventRecord]
+        A list of eventrecords to check for.
+    particlecode : int
+        the particle to look for.
+
+    Returns
+    -------
+    List of EventRecords.
+
+    """
+    
+    ret = []
+    
+    for evt in eventrecords:
+        if particlecode in getParticleStatistics(evt).keys():
+            ret.append(evt)
+    
+    return ret
+
+
+            

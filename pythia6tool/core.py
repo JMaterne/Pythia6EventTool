@@ -82,8 +82,8 @@ class EventRecord:
                 )
     
     def getTrackRecords(self):
-       from reading_util import readTrackRecords
-       return readTrackRecords(self.eventfile,self.trackStart,self.trackEnd)
+        from pythia6tool.io_util import readTrackRecords
+        return readTrackRecords(self.eventfile,self.trackStart,self.trackEnd)
    
     
 class TrackRecord:
@@ -143,7 +143,7 @@ class TrackRecord:
         else:
             K1meaning = "Please consult Pythia6 Manual"
         
-        K2particlecode = particlecodes.getParticleName(self.K2)
+        K2particlecode = pythia6tool.particlecodes.getParticleName(self.K2)
         
         return (
                     f"K(I,1): {self.K1} (status code: {K1meaning})\n\n"

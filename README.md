@@ -24,3 +24,9 @@ Check out the examples/ directory for some use cases.
 ---
 
 For questions or contributions, feel free to submit an issue or pull request in the GitHub repository.
+
+## How to install
+
+If you are using pip you can use the following command to install the package:
+
+#### python -m pip install -e PATH/TO/Pythia6EventTool
