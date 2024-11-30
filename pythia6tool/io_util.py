@@ -3,16 +3,15 @@
 from pythia6tool.core import EventRecord
 from pythia6tool.core import TrackRecord
 
-def initialRead(evtfile_path):  
+def initialRead(evtfile_path, **kwargs):  
     """
     Parameters
     ----------
     evtfile_path : str
         The path for the pythia event file.
-    **kwargs { firstEvent : int
-            only reads events with this index or higher.
-            lastEvent : int
-            only reads events with this index or lower.
+    **kwargs { highram : bool
+              If highram is set to True (default), all the eventrecords will be loaded with their associated trackrecords.
+              Otherwise the trackrecords will be loaded dynamically during runtime which can yield slower runtimes.
             }
             
     Returns list of EventRecord objects
@@ -20,7 +19,8 @@ def initialRead(evtfile_path):
     Initially all the events are read into EventRecord objects
 
     """
-
+    highram = kwargs.get('highram', True)
+    
     separator = "============================================"
         
     print("Reading " + evtfile_path + " ...")
@@ -45,7 +45,8 @@ def initialRead(evtfile_path):
 
             elif separator in line:
                   trackStart = i+1
-
+                  
+                  
             elif trackStart == 0:
                 evtinfo += line
             
@@ -90,18 +91,22 @@ def initialRead(evtfile_path):
                                     trackEnd = trackEnd,
                                     eventfile = evtfile_path
                                 )
-                
+                    
                 eventrecords.append(er)
                 
                 evtinfo = ""
                 trackStart = 0
                 trackEnd = 0
+        
+    if(highram):
                 
+        readTrackRecords(evtfile_path, eventrecords)
+        
     print("Finished Reading.")
     
     return eventrecords
 
-def readTrackRecords(evtfile_path,trackStart,trackEnd):
+def readTrackRecords(evtfile_path,eventrecords):
     """
     
 
@@ -109,26 +114,42 @@ def readTrackRecords(evtfile_path,trackStart,trackEnd):
     ----------
     evtfile_path : str
         Path to eventfile.
-    trackStart : int
-        line index where track records start.
-    trackEnd : int
-        line index where track records end.
-
+    eventrecords : list[EventRecord]
+        eventrecords to read
+        
     Returns
     -------
-    trackrecords : list
-        Returns list of TrackRecord objects.
+    trackrecords : dict
+        Returns a dictionary with the ievent index as key and a list of TrackRecord objects as values.
 
     """
+    
+    #necessary so we will only iterate over the file once
+    trStartDict = dict()
+    endDict = dict()
+    
+    for event in eventrecords:
+        trStartDict[event.trackStart] = event
+        endDict[event] = event.trackEnd
+        
+    
+    startline = 10**10
+    endline = 10**10
+    
     with open(evtfile_path) as infile:
         
-        trackrecords = []
         
         for i, line in enumerate(infile):
             
-            if i >= trackStart and i <= trackEnd:
-                track = line.split()
+            
+            if i+1 in trStartDict.keys():
+                startline = i+1
+                endline = endDict[trStartDict[i+1]]
                 
+            elif i >= startline and i <= endline:
+                
+                track = line.split()
+
                 tr = TrackRecord(
                     I=int(track[0]),
                     K1=int(track[1]),
@@ -147,13 +168,18 @@ def readTrackRecords(evtfile_path,trackStart,trackEnd):
                     V4=float(track[14]) if len(track) > 14 else None,
                     V5=float(track[15]) if len(track) > 15 else None
                 )
+                        
+                trStartDict[startline].trackrecords.append(tr)
                 
-                trackrecords.append(tr)
+                if i == endline:
+                    endDict.pop(trStartDict[startline])
+                    trStartDict.pop(startline)
+                    startline = 10**10
+                    endline = 10**10
                 
-            elif i>trackEnd:
-                break
-            
-    return trackrecords
+                
+
+
 
 def writeEventFile(eventrecords, output_path, **kwargs):
     """

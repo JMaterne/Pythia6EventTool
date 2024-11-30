@@ -133,11 +133,12 @@ def getEventsWithParticle(eventrecords, particlecode):
     """
     
     ret = []
+        
     
     for evt in eventrecords:
         if particlecode in getParticleStatistics(evt).keys():
             ret.append(evt)
-    
+        
     return ret
 
 
