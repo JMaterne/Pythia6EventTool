@@ -43,6 +43,7 @@ class EventRecord:
         
         self.eventfile = kwargs.get('eventfile', None)
         
+        self.trackrecords = []
     
     """
     User friendly printing
@@ -82,9 +83,15 @@ class EventRecord:
                 )
     
     def getTrackRecords(self):
-        from pythia6tool.io_util import readTrackRecords
-        return readTrackRecords(self.eventfile,self.trackStart,self.trackEnd)
-   
+        if self.trackrecords == []:
+            from pythia6tool.io_util import readTrackRecords
+            return readTrackRecords(self.eventfile,[self])[self.ievent]
+        else:
+            return self.trackrecords
+    
+    
+    def setTrackRecords(self,trackrecords):
+        self.trackrecords = trackrecords
     
 class TrackRecord:
     
@@ -109,7 +116,8 @@ class TrackRecord:
         self.V3 = kwargs.get('V3', None)
         self.V4 = kwargs.get('V4', None)
         self.V5 = kwargs.get('V5', None)
-    
+        
+        self.linenumber = kwargs.get('linenumber', None)
     
     """
     User friendly printing
@@ -162,3 +170,5 @@ class TrackRecord:
                     f"V(I,4): {self.V4} (time of production in mm/c)\n\n"
                     f"V(I,5): {self.V5} (proper lifetime of particle in mm/c - see Pythia6 Manual)"
                 )
+    def getParticleName(self):
+        return pythia6tool.particlecodes.getParticleName(self.K2)
