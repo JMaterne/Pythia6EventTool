@@ -166,7 +166,8 @@ def readTrackRecords(evtfile_path,eventrecords):
                     V2=float(track[12]),
                     V3=float(track[13]),
                     V4=float(track[14]) if len(track) > 14 else None,
-                    V5=float(track[15]) if len(track) > 15 else None
+                    V5=float(track[15]) if len(track) > 15 else None,
+                    linenumber=i-startline+1
                 )
                         
                 trStartDict[startline].trackrecords.append(tr)

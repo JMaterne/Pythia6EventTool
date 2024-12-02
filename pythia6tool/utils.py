@@ -114,6 +114,7 @@ def printParticleHistory(eventrecord, trackrecord):
         print(tr.getParticleName() , end=" ")
         if(i<len(decaychain)-1):
             print("-->", end=" ")
+    print()
     
 def getEventsWithParticle(eventrecords, particlecode):
     """
@@ -142,4 +143,33 @@ def getEventsWithParticle(eventrecords, particlecode):
     return ret
 
 
+def getParent(eventrecord, trackrecord):
+    return eventrecord.getTrackRecords()[trackrecord.K3-1]
+
+def getAllDaughters(eventrecord, trackrecord):
+    """
+    
+
+    Parameters
+    ----------
+    eventrecord : TYPE
+        DESCRIPTION.
+    trackrecord : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    daughters : TYPE
+        DESCRIPTION.
+
+    """
+    
+    trs = eventrecord.getTrackRecords()
+    
+    daughters = []
+    
+    for tr in trs:
+        if tr.K3 == trackrecord.linenumber:
+            daughters.append(tr)
             
+    return daughters

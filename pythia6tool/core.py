@@ -116,7 +116,8 @@ class TrackRecord:
         self.V3 = kwargs.get('V3', None)
         self.V4 = kwargs.get('V4', None)
         self.V5 = kwargs.get('V5', None)
-    
+        
+        self.linenumber = kwargs.get('linenumber', None)
     
     """
     User friendly printing
